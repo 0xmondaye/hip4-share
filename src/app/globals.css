@@ -1,0 +1,1509 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@plugin "tailwindcss-scrim-gradients";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* ponytail: mist has no stop between 950 (14.8%) and 900 (21.8%); midpoint
+     mix keeps bg < surface < surface-2 < border distinct */
+  --surface: color-mix(
+    in oklab,
+    oklch(14.8% 0.004 228.8),
+    oklch(21.8% 0.008 223.9)
+  ); /* mist-950/900 */
+  --surface-2: oklch(21.8% 0.008 223.9); /* mist-900 */
+  --border: oklch(0.922 0 0);
+  --muted: oklch(0.97 0 0);
+  --accent: oklch(0.97 0 0);
+  --yes: #10b981;
+  --no: #f43f5e;
+  --brand: #a3e635;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-yes: var(--yes);
+  --color-no: var(--no);
+  --color-brand: var(--brand);
+  --font-sans: var(--font-bricolage);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-geist-pixel-circle);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+body {
+  font-family:
+    var(--font-bricolage),
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-optical-sizing: auto;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--brand) 30%, transparent);
+}
+
+/* Liquid 3D milestone bar — adapted from "Pure CSS Progress"
+   (codepen.io/rgg/pen/QbRyOq), recolored to brand lime.
+   Fill width comes from the --pct custom property set inline. */
+.liquid-chart {
+  font-size: 8px;
+  /* short perspective on purpose: the trapezoid flare is the 3D look */
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
+  /* room for the floor apron that juts out below the slab */
+  padding-bottom: 4em;
+}
+.liquid-chart .bar3d {
+  position: relative;
+  height: 10em;
+  transform: rotateX(60deg) rotateY(0deg);
+  transform-style: preserve-3d;
+}
+.liquid-chart .face {
+  font-size: 2em;
+  position: relative;
+  width: 100%;
+  height: 2em;
+  /* translucent white walls so the unfilled stretch reads as a 3D box,
+     like the reference pen; per-face alphas below fake the lighting */
+  background: rgba(254, 254, 254, 0.06);
+  border-radius: 0.4em;
+}
+.liquid-chart .side-a,
+.liquid-chart .side-b {
+  width: 2em;
+}
+.liquid-chart .side-a {
+  background: color-mix(in oklab, var(--brand) 60%, transparent);
+  transform: rotateX(90deg) rotateY(-90deg) translateX(2em) translateY(1em)
+    translateZ(1em);
+}
+.liquid-chart .side-b {
+  position: absolute;
+  right: 0;
+  transform: rotateX(90deg) rotateY(-90deg) translateX(4em) translateY(1em)
+    translateZ(-1em);
+}
+.liquid-chart .side-0 {
+  transform: rotateX(90deg) rotateY(0) translateX(0) translateY(1em)
+    translateZ(-1em);
+}
+.liquid-chart .side-1 {
+  transform: rotateX(90deg) rotateY(0) translateX(0) translateY(1em)
+    translateZ(3em);
+}
+.liquid-chart .top {
+  background: rgba(254, 254, 254, 0.14);
+  transform: rotateX(0deg) rotateY(0) translateX(0) translateY(4em)
+    translateZ(2em);
+}
+.liquid-chart .side-1 {
+  background: rgba(254, 254, 254, 0.09);
+}
+.liquid-chart .side-b {
+  background: rgba(254, 254, 254, 0.12);
+}
+.liquid-chart .floor {
+  background: rgba(254, 254, 254, 0.11);
+  box-shadow:
+    0 0.1em 0.6em rgba(0, 0, 0, 0.3),
+    0.6em -0.5em 3em rgba(0, 0, 0, 0.3);
+}
+.liquid-chart .growing-bar {
+  width: var(--pct, 0%);
+  height: 2em;
+  /* shimmer stripe layered over a lime depth gradient, both sweeping right */
+  background:
+    linear-gradient(
+        100deg,
+        transparent 35%,
+        rgba(255, 255, 255, 0.4) 50%,
+        transparent 65%
+      )
+      no-repeat,
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--brand) 80%, transparent) 0%,
+      var(--brand) 60%,
+      color-mix(in oklab, var(--brand) 82%, white) 100%
+    );
+  background-size:
+    50% 100%,
+    100% 100%;
+  background-position:
+    -60% 0,
+    0 0;
+  border-radius: 0.4em 0 0 0.4em;
+  transition: width 0.8s ease-in-out;
+  animation: liquid-shimmer 2.4s ease-in-out infinite;
+}
+@keyframes liquid-shimmer {
+  0% {
+    background-position:
+      -60% 0,
+      0 0;
+  }
+  100% {
+    background-position:
+      220% 0,
+      0 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .liquid-chart .growing-bar {
+    animation: none;
+  }
+}
+
+/* Goal figure: lime up to --pct then white, with the same shimmer sweep
+   as the bar, clipped to the glyphs. */
+.goal-shimmer {
+  background-image:
+    linear-gradient(
+      100deg,
+      transparent 35%,
+      rgba(255, 255, 255, 0.5) 50%,
+      transparent 65%
+    ),
+    linear-gradient(90deg, var(--brand) var(--pct, 0%), #fff var(--pct, 0%));
+  background-size:
+    50% 100%,
+    100% 100%;
+  background-position:
+    -60% 0,
+    0 0;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: liquid-shimmer 2.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .goal-shimmer {
+    animation: none;
+  }
+}
+.liquid-chart .side-0 .growing-bar {
+  box-shadow: -0.5em -1.5em 4em color-mix(in oklab, var(--brand) 80%, transparent);
+}
+.liquid-chart .floor .growing-bar {
+  box-shadow: 0 0 2em color-mix(in oklab, var(--brand) 80%, transparent);
+}
+
+@keyframes pulseFade {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.pulse-dot {
+  animation: pulseFade 1.8s ease-in-out infinite;
+}
+
+/* Radar ping on the chart line head. Applied to the halo circle already under
+   the head dot, so reduced motion just leaves the static halo behind.
+   ponytail: scale over the CSS `r` property — wider browser support. */
+@keyframes head-ping {
+  from {
+    transform: scale(0.45);
+    opacity: 0.4;
+  }
+  to {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+.head-ping {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0.25; /* the reduced-motion resting state */
+  animation: head-ping 1.8s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .head-ping {
+    animation: none;
+  }
+}
+
+/* Primary CTA: glossy lime pill with a ::before hover-gradient overlay
+   (crossfades via opacity, matching the reference markup). isolate +
+   z-index:-1 paints the overlay above the button background but under
+   its inline text — no wrapper span needed. */
+.btn-brand {
+  /* lime map of reference blues by HSL lightness (#1a2f9e L36→#2f68ff L59,
+     hover #2440c0 L45→#3f77ff L62): lime-600 L35→lime-400 L55, hover
+     lime-500 L45→lime-300 L61 */
+  --grad-brand: linear-gradient(180deg, #65a30d 0%, #a3e635 100%);
+  --grad-brand-hover: linear-gradient(180deg, #84cc16 9%, #bef264 100%);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 9999px;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background: var(--grad-brand);
+  color: #000;
+  /* shadow-glossy from the reference design system */
+  box-shadow:
+    0 1px 2px 0 rgb(0 0 0 / 0.25),
+    inset 0 1px 0 0 rgb(255 255 255 / 0.18);
+  transition: transform 0.15s;
+  user-select: none;
+  white-space: nowrap;
+}
+.btn-brand::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--grad-brand-hover);
+  box-shadow:
+    inset 0 -1px 3px 0 #d9f99d,
+    inset 0 -1.5px 5px 0 #bef264,
+    inset 0 0 12px 0 #a3e635,
+    inset 0 0 10px 0 #a3e635;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.btn-brand:hover::before {
+  opacity: 1;
+}
+.btn-brand:active {
+  transform: scale(0.99);
+}
+.btn-brand:focus-visible {
+  outline: 2px solid rgb(163 230 53 / 0.5);
+  outline-offset: 2px;
+}
+
+/* Dark grays retoned onto the Tailwind mist scale (same lightness stops:
+   0.145→950, 0.205→900, 0.269→800, 0.371→700, 0.439→600, 0.556→500,
+   0.708→400, 0.87→300, 0.922→200, 0.985→50). */
+.dark {
+  --background: oklch(14.8% 0.004 228.8);
+  --foreground: oklch(98.7% 0.002 197.1);
+  --card: oklch(21.8% 0.008 223.9);
+  --card-foreground: oklch(98.7% 0.002 197.1);
+  --popover: oklch(21.8% 0.008 223.9);
+  --popover-foreground: oklch(98.7% 0.002 197.1);
+  --primary: oklch(92.5% 0.005 214.3);
+  --primary-foreground: oklch(21.8% 0.008 223.9);
+  --secondary: oklch(27.5% 0.011 216.9);
+  --secondary-foreground: oklch(98.7% 0.002 197.1);
+  --muted: oklch(27.5% 0.011 216.9);
+  --muted-foreground: oklch(72.3% 0.014 214.4);
+  --accent: oklch(27.5% 0.011 216.9);
+  --accent-foreground: oklch(98.7% 0.002 197.1);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(27.5% 0.011 216.9);
+  --input: oklch(27.5% 0.011 216.9);
+  --ring: oklch(56% 0.021 213.5);
+  --chart-1: oklch(87.2% 0.007 219.6);
+  --chart-2: oklch(56% 0.021 213.5);
+  --chart-3: oklch(45% 0.017 213.2);
+  --chart-4: oklch(37.8% 0.015 216);
+  --chart-5: oklch(27.5% 0.011 216.9);
+  --sidebar: oklch(21.8% 0.008 223.9);
+  --sidebar-foreground: oklch(98.7% 0.002 197.1);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(98.7% 0.002 197.1);
+  --sidebar-accent: oklch(27.5% 0.011 216.9);
+  --sidebar-accent-foreground: oklch(98.7% 0.002 197.1);
+  --sidebar-border: oklch(27.5% 0.011 216.9);
+  --sidebar-ring: oklch(56% 0.021 213.5);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* App palette — overrides shadcn dark defaults so the trading UI keeps its
+   look. Brand lime lives in --brand; --muted/--accent keep shadcn surface
+   semantics (app text uses text-muted-foreground / text-brand). */
+.dark {
+  --background: oklch(14.8% 0.004 228.8); /* mist-950 */
+  --foreground: oklch(96.3% 0.002 197.1); /* mist-100 */
+  --card: var(--surface);
+  --card-foreground: oklch(96.3% 0.002 197.1);
+  --popover: var(--surface);
+  --popover-foreground: oklch(96.3% 0.002 197.1);
+  --border: oklch(27.5% 0.011 216.9); /* mist-800 */
+  --input: oklch(27.5% 0.011 216.9);
+  --muted-foreground: oklch(72.3% 0.014 214.4); /* mist-400 */
+  --brand: #a3e635;
+}
+
+/* Privy modal theming. Privy reads these off `body` only — its overlay is
+   portaled to body, so a :root block would not reach it.
+   https://docs.privy.io/basics/get-started/dashboard/configuring-appearance
+   ponytail: app is dark-only (`.dark` is hardcoded on <html>), so one block —
+   duplicate under a light selector if a theme toggle ever lands. */
+body {
+  /* Privy sizes the modal card off -lg, so these track the site's radius
+     scale — do NOT set them all to 9999px, that turns the dialog into an
+     ellipse. -full is Privy's own pill token and is safe to max. */
+  --privy-border-radius-sm: calc(var(--radius) * 0.6);
+  --privy-border-radius-md: calc(var(--radius) * 0.8);
+  --privy-border-radius-lg: var(--radius);
+  --privy-border-radius-full: 9999px;
+
+  --privy-color-background: var(--surface);
+  --privy-color-background-2: var(--surface-2);
+  --privy-color-background-3: oklch(
+    27.5% 0.011 216.9
+  ); /* mist-800, = --border */
+
+  --privy-color-foreground: var(--foreground);
+  --privy-color-foreground-2: var(--muted-foreground);
+  --privy-color-foreground-3: oklch(56% 0.021 213.5); /* mist-500 */
+  --privy-color-foreground-4: oklch(45% 0.017 213.2); /* mist-600 */
+  --privy-color-foreground-accent: #000; /* lime is bright — dark text on it */
+
+  /* lime ramp, same stops as .btn-brand */
+  --privy-color-accent: var(--brand); /* lime-400 */
+  --privy-color-accent-light: #bef264; /* lime-300 */
+  --privy-color-accent-lightest: #d9f99d; /* lime-200 */
+  --privy-color-accent-dark: #84cc16; /* lime-500 */
+  --privy-color-accent-darkest: #65a30d; /* lime-600 */
+
+  --privy-color-success: var(--yes);
+  --privy-color-error: var(--no);
+  --privy-color-error-light: color-mix(in oklab, var(--no) 20%, transparent);
+}
+
+/* ── transitions-dev ─────────────────────────────────────────────
+   Motion tokens + the snippets this app uses (number pop-in, error
+   shake, shimmer text, accordion, success check, tabs sliding).
+   ponytail: per-snippet vars only, not the full _root.css block —
+   pull more from the skill's _root.css as transitions are added. */
+:root {
+  /* motion tokens */
+  --duration-stagger: 40ms;
+  --duration-micro: 80ms;
+  --duration-quick: 150ms;
+  --duration-fast: 250ms;
+  --duration-medium: 350ms;
+  --duration-slow: 400ms;
+  --duration-very-slow: 500ms;
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: ease-in-out;
+  --ease-out: ease-out;
+  --ease-linear: linear;
+  --ease-bounce: cubic-bezier(0.34, 1.36, 0.64, 1);
+  --ease-bounce-strong: cubic-bezier(0.34, 3.85, 0.64, 1);
+  /* Card resize */
+  --resize-dur: 300ms;
+  --resize-ease: var(--ease-smooth-out);
+  /* Number pop-in */
+  --digit-dur: 500ms;
+  --digit-distance: 8px;
+  --digit-stagger: 70ms;
+  --digit-blur: 2px;
+  --digit-ease: cubic-bezier(0.34, 1.45, 0.64, 1);
+  --digit-dir-x: 0;
+  --digit-dir-y: 1;
+  /* Error state shake */
+  --shake-distance: 6px;
+  --shake-overshoot: 4px;
+  --shake-dur-a: 80ms;
+  --shake-dur-b: 60ms;
+  --shake-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --revert-hold: 3000ms;
+  --revert-dur: 280ms;
+  /* Shimmer text — theme vars so light/dark both work */
+  --shimmer-dur: 2000ms;
+  --shimmer-base: var(--muted-foreground);
+  --shimmer-highlight: var(--foreground);
+  --shimmer-band: 400%;
+  --shimmer-ease: linear;
+  /* Tabs sliding */
+  --tabs-dur: 250ms;
+  --tabs-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Success check */
+  --check-opacity-dur: 500ms;
+  --check-rotate-dur: 500ms;
+  --check-rotate-from: 80deg;
+  --check-bob-dur: 500ms;
+  --check-y-amount: 40px;
+  --check-blur-dur: 500ms;
+  --check-blur-from: 10px;
+  --check-path-dur: 500ms;
+  --check-path-delay: 80ms;
+  --check-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --check-ease-opacity: cubic-bezier(0.22, 1, 0.36, 1);
+  --check-ease-rotate: cubic-bezier(0.22, 1, 0.36, 1);
+  --check-ease-bob: cubic-bezier(0.34, 1.35, 0.64, 1);
+  --check-ease-path: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Accordion expand */
+  --acc-expand: 250ms;
+  --acc-collapse: 250ms;
+  --acc-chevron: 250ms;
+  --acc-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Carousel caption: per-char slide-up on card change (reactbits RotatingText, CSS-only) */
+@keyframes rot-char-in {
+  from {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.rot-char {
+  display: inline-block;
+  animation: rot-char-in 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rot-char {
+    animation: none;
+  }
+}
+
+/* Number pop-in */
+@keyframes t-digit-pop-in {
+  0% {
+    transform: translate(
+      calc(var(--digit-distance) * var(--digit-dir-x)),
+      calc(var(--digit-distance) * var(--digit-dir-y))
+    );
+    opacity: 0;
+    filter: blur(var(--digit-blur));
+  }
+  100% {
+    transform: translate(0, 0);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+.t-digit-group {
+  display: inline-flex;
+  align-items: baseline;
+}
+.t-digit {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
+/* GeistPixelCircle ships no `tnum`, so `tabular-nums` is a no-op on it and
+   ticking counters jitter (digit advances run 0.49em–0.69em). Pin each cell
+   instead. ponytail: 0.7em clears the widest glyph ("4") — re-measure if the
+   heading font changes. Mono groups have real tnum and are left alone. */
+.font-heading .t-digit {
+  width: 0.7em;
+  text-align: center;
+}
+.t-digit-group.is-animating .t-digit {
+  animation: t-digit-pop-in var(--digit-dur) var(--digit-ease) both;
+}
+.t-digit-group.is-animating .t-digit[data-stagger="1"] {
+  animation-delay: var(--digit-stagger);
+}
+.t-digit-group.is-animating .t-digit[data-stagger="2"] {
+  animation-delay: calc(var(--digit-stagger) * 2);
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-digit-group .t-digit {
+    animation: none !important;
+  }
+}
+
+/* Error state shake */
+.t-input {
+  transition: border-color 150ms ease-out;
+  will-change: transform;
+}
+.t-input.is-error {
+  transition: border-color var(--revert-dur, 280ms) ease-out;
+}
+.t-input.is-shaking {
+  animation: t-input-shake calc(var(--shake-dur-a) * 2 + var(--shake-dur-b) * 2)
+    linear;
+}
+@keyframes t-input-shake {
+  0% {
+    transform: translateX(0);
+    animation-timing-function: var(--shake-ease);
+  }
+  28.57% {
+    transform: translateX(var(--shake-distance));
+    animation-timing-function: var(--shake-ease);
+  }
+  57.14% {
+    transform: translateX(calc(var(--shake-distance) * -1));
+    animation-timing-function: var(--shake-ease);
+  }
+  78.57% {
+    transform: translateX(var(--shake-overshoot));
+    animation-timing-function: var(--shake-ease);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-input {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* Shimmer text */
+.t-shimmer {
+  position: relative;
+  display: inline-block;
+  color: var(--shimmer-base);
+}
+.t-shimmer::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 40%,
+    var(--shimmer-highlight) 50%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: var(--shimmer-band) 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: t-shimmer var(--shimmer-dur) var(--shimmer-ease) infinite;
+}
+@keyframes t-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-shimmer::before {
+    animation: none !important;
+  }
+}
+
+/* Success check */
+.t-success-check {
+  display: inline-block;
+  transform-origin: center;
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+.t-success-check svg {
+  display: block;
+  overflow: visible;
+}
+/* dasharray 25 ≈ getTotalLength() of the M4 12.5l5.5 5.5L20 6.5 check
+   path used in TradePanel, rounded up */
+.t-success-check svg path {
+  stroke-dasharray: 25;
+  stroke-dashoffset: 25;
+}
+.t-success-check[data-state="in"] {
+  animation:
+    t-check-fade var(--check-opacity-dur) var(--check-ease-opacity) forwards,
+    t-check-rotate var(--check-rotate-dur) var(--check-ease-rotate) forwards,
+    t-check-blur var(--check-blur-dur) var(--check-ease-out) forwards,
+    t-check-bob var(--check-bob-dur) var(--check-ease-bob) forwards;
+}
+.t-success-check[data-state="in"] svg path {
+  animation: t-check-draw var(--check-path-dur) var(--check-ease-path)
+    var(--check-path-delay, 0ms) forwards;
+}
+@keyframes t-check-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes t-check-rotate {
+  from {
+    transform: rotate(var(--check-rotate-from));
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+@keyframes t-check-blur {
+  from {
+    filter: blur(var(--check-blur-from));
+  }
+  to {
+    filter: blur(0);
+  }
+}
+@keyframes t-check-bob {
+  from {
+    translate: 0 var(--check-y-amount);
+  }
+  to {
+    translate: 0 0;
+  }
+}
+@keyframes t-check-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-success-check {
+    animation: none !important;
+    opacity: 1;
+  }
+  .t-success-check svg path {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}
+
+/* Accordion expand — child combinators instead of the snippet's
+   descendant selectors: TradePanel nests slippage inside Order Info,
+   and descendant matching would force the inner panel open with the
+   outer. Chevron flips off its own button's aria-expanded for the
+   same reason. */
+.t-acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--acc-collapse) var(--acc-ease);
+}
+.t-acc[data-open="true"] > .t-acc-panel {
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--acc-expand) var(--acc-ease);
+}
+.t-acc-panel-inner {
+  overflow: hidden;
+  opacity: 0;
+  filter: blur(2px);
+  transition:
+    opacity var(--acc-collapse) var(--acc-ease),
+    filter var(--acc-collapse) var(--acc-ease);
+}
+.t-acc[data-open="true"] > .t-acc-panel > .t-acc-panel-inner {
+  opacity: 1;
+  filter: blur(0);
+  transition:
+    opacity var(--acc-expand) var(--acc-ease),
+    filter var(--acc-expand) var(--acc-ease);
+}
+.t-acc-chevron {
+  display: inline-flex;
+  transform: scaleY(1);
+  transform-origin: center;
+  transition: transform var(--acc-chevron) var(--acc-ease);
+}
+.t-acc-chevron path {
+  vector-effect: non-scaling-stroke;
+}
+button[aria-expanded="true"] .t-acc-chevron {
+  transform: scaleY(-1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-acc-panel,
+  .t-acc-panel-inner,
+  .t-acc-chevron {
+    transition: none !important;
+  }
+}
+
+/* Horizontal collapse — the accordion's width sibling, for the header's back
+   button and wordmark. Two mechanisms don't work here and both are worth
+   naming: card resize can't tween an auto width, and the accordion's
+   0fr↔1fr track can't either once rotated to columns — the container is a
+   flex item, so its width is content-driven and no track ratio shrinks it.
+   max-width does, cross-browser, with the element clipping its own overflow.
+   Set --hcollapse-w per instance to the open width; it only has to be >= the
+   real width, and the closer it is the truer the duration feels.
+   Open is the default so a plain [data-open] rule can pin it open at lg. */
+.t-hcollapse {
+  display: flex;
+  overflow: hidden;
+  max-width: var(--hcollapse-w);
+  opacity: 1;
+  /* `none`, not blur(0) — Lightning CSS minifies blur(0) to invalid blur() */
+  filter: none;
+  transition:
+    max-width var(--acc-expand) var(--acc-ease),
+    opacity var(--acc-expand) var(--acc-ease),
+    filter var(--acc-expand) var(--acc-ease);
+}
+/* the child keeps its natural width while the parent clips it */
+.t-hcollapse > * {
+  flex: none;
+}
+.t-hcollapse[data-open="false"] {
+  max-width: 0;
+  opacity: 0;
+  filter: blur(2px);
+  transition:
+    max-width var(--acc-collapse) var(--acc-ease),
+    opacity var(--acc-collapse) var(--acc-ease),
+    filter var(--acc-collapse) var(--acc-ease);
+}
+/* lg+ drops the whole behaviour and pins each slot to its desktop resting
+   state. Both selectors double up on the class on purpose: this block is
+   unlayered like the rules above it, so it can't rely on winning on source
+   order, and a Tailwind `lg:hidden` would lose to the unlayered base rule. */
+@media (width >= 64rem) {
+  .t-hcollapse.t-hcollapse-lg-hidden {
+    display: none;
+  }
+  .t-hcollapse.t-hcollapse-lg-open[data-open] {
+    max-width: var(--hcollapse-w);
+    opacity: 1;
+    filter: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-hcollapse {
+    transition: none !important;
+  }
+}
+
+/* Tabs sliding — Base UI Tabs.Indicator positions via --active-tab-*;
+   this only owns the tween */
+.t-tabs-indicator {
+  transition-property: translate, width;
+  transition-duration: var(--tabs-dur);
+  transition-timing-function: var(--tabs-ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-tabs-indicator {
+    transition: none !important;
+  }
+}
+
+/* Tabs sliding — bottom-nav active pill. Geometry is Tailwind, this owns the
+   tween. Only transform tweens: the pill's width is a % of a nav that runs its
+   own resize animation, and transitioning both makes them fight. */
+.t-tabs-pill {
+  transition: transform var(--tabs-dur) var(--tabs-ease);
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-tabs-pill {
+    transition: none !important;
+  }
+}
+
+/* Liquid glass — refraction, not frost. The backdrop is bent by an
+   feDisplacementMap (see BottomNav's <svg>), never blurred; a light tint and a
+   specular rim keep the content on top legible.
+   @utility, not a plain class, so it takes variants — the header pills are
+   glass on mobile only (`max-lg:glass`) while the desktop header owns the
+   surface itself. background-image, not the `background` shorthand, so a
+   `bg-*` utility on the same element can't be reset by it. */
+@utility glass {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--surface-2) 52%, transparent),
+    color-mix(in oklab, var(--background) 64%, transparent)
+  );
+  /* unprefixed only — lightningcss owns prefixing, and a hand-written
+     -webkit-backdrop-filter after this one makes it drop the pair entirely.
+     Blur is the Safari/Firefox story: neither renders SVG backdrop filters,
+     so they get frost + tint instead of refraction. */
+  backdrop-filter: blur(9px) saturate(1.5);
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.22),
+    /* top specular */ inset 0 -1px 0 0 rgb(255 255 255 / 0.08),
+    /* bounce off the floor */ inset 0 0 0 1px rgb(255 255 255 / 0.08),
+    /* rim */ 0 8px 32px -8px rgb(0 0 0 / 0.55); /* lift */
+
+  /* Chromium is the only engine that runs an SVG filter on a backdrop (WebKit
+     #245510 — parses, renders nothing). Because it PARSES, a bare
+     @supports (backdrop-filter: url(#a)) false-positives in Safari/Firefox and
+     they'd override the frost above with a dead declaration. paint() (Houdini
+     Paint API) is Chromium-only at parse level, so it gates this branch to the
+     one engine that renders it. ponytail: revisit if WebKit fixes #245510.
+     The filter has to sit on the glass element itself: on a child the backdrop
+     would include this element's own tint, and it'd refract that. */
+  @supports (backdrop-filter: url(#a)) and (background: paint(a)) {
+    backdrop-filter: url(#nav-glass) saturate(1.5) blur(3px);
+  }
+}
+
+/* Card resize */
+.t-resize {
+  transition:
+    width var(--resize-dur) var(--resize-ease),
+    height var(--resize-dur) var(--resize-ease);
+  will-change: width, height;
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-resize {
+    transition: none !important;
+  }
+}
+/* 1-Tap multiplier slider — styled native range, filled track via --pct */
+.tap-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--color-brand) var(--pct, 0%),
+    var(--color-surface-2) var(--pct, 0%)
+  );
+  outline-offset: 4px;
+  cursor: pointer;
+}
+.tap-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: var(--color-foreground);
+  border: none;
+  box-shadow: 0 1px 4px oklch(0% 0 0 / 0.4);
+  transition: transform 120ms ease;
+}
+.tap-slider::-webkit-slider-thumb:active {
+  transform: scale(1.15);
+}
+.tap-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: var(--color-foreground);
+  border: none;
+  box-shadow: 0 1px 4px oklch(0% 0 0 / 0.4);
+}
+
+/* Packs-teaser slab marquee. Each track holds its list twice and the items
+   carry margin (not the parent a gap), so translateY(-50%) is exactly one
+   period — the loop has no seam. Duration/direction set per column inline. */
+@keyframes slab-marquee {
+  to {
+    transform: translateY(-50%);
+  }
+}
+.slab-track {
+  animation: slab-marquee 54s linear infinite;
+}
+/* Same lit-LED read as the PnL chart line (Portfolio.tsx): brand dots — the
+   pixel-circle heading font supplies the grid — under a soft halo. */
+.led-glow {
+  color: var(--brand);
+  text-shadow:
+    0 0 8px color-mix(in oklab, var(--brand) 50%, transparent),
+    0 0 22px color-mix(in oklab, var(--brand) 28%, transparent);
+}
+/* Beveled brand rim — same specular logic as .glass (BottomNav), brand-tinted.
+   A lit top edge fading to a shaded bottom reads as an edge catching light; one
+   flat colour reads as a sticker. Per-side border colours, not inset shadows:
+   the teaser's slab marquee is an absolutely-positioned child, and descendants
+   paint over inset shadows but never over a border. Rounded corners blend the
+   four sides, so the bevel wraps instead of stopping at the corner. */
+.rim-brand {
+  border: 1px solid color-mix(in oklab, var(--brand) 22%, transparent);
+  border-top-color: color-mix(in oklab, var(--brand) 65%, transparent);
+  border-bottom-color: rgb(0 0 0 / 0.55);
+  box-shadow:
+    0 1px 0 0 rgb(255 255 255 / 0.05),
+    /* outer highlight */ 0 20px 50px -28px
+      color-mix(in oklab, var(--brand) 55%, transparent); /* lift */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slab-track {
+    animation: none;
+  }
+}
+
+/* ── Pack-tear reveal theater (ported from cac /play) ─────────────────────────
+   PackRip owns the rip itself (three.js, src/components/gacha/PackRip.tsx). These
+   are the rarity tells that fire on the pull: a one-shot bloom flash for chase
+   pulls, and the pure-CSS UR flare UrFlare falls back to with no WebGL. */
+
+/* one-shot flash when the cover comes off — chase rarities only */
+.tear-bloom {
+  background: radial-gradient(
+    circle at 50% 45%,
+    var(--bloom-color, #fff) 0%,
+    transparent 60%
+  );
+  mix-blend-mode: screen;
+  animation: tear-bloom-in 0.7s ease-out forwards;
+}
+@keyframes tear-bloom-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  40% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+/* UR lens-flare burst — conic rainbow wash, two counter-rotating ray fans, an
+   anamorphic streak and a hot core. The parent is a 0x0 anchor with
+   mix-blend-screen, so every layer fades to transparent-black over the theater. */
+.ur-flare > * {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 150vmax;
+  height: 150vmax;
+  transform: translate(-50%, -50%);
+}
+.ur-flare__wash {
+  background: conic-gradient(
+    from 210deg,
+    #ff5f6d,
+    #ff5fd0 12%,
+    #b45fff 24%,
+    #5fc9ff 37%,
+    #5fffc9 50%,
+    #b8ff5f 62%,
+    #ffe75f 74%,
+    #ff9d5f 87%,
+    #ff5f6d
+  );
+  filter: blur(24px) saturate(1.4);
+  opacity: 0.75;
+  mask-image: radial-gradient(
+    closest-side,
+    #000,
+    rgba(0, 0, 0, 0.9) 30%,
+    transparent 70%
+  );
+}
+.ur-flare__rays,
+.ur-flare__rays--alt {
+  background: repeating-conic-gradient(
+    rgba(255, 255, 255, 0.85) 0deg 0.4deg,
+    transparent 1deg 5.3deg
+  );
+  filter: blur(1px);
+  opacity: 0.8;
+  mask-image: radial-gradient(
+    closest-side,
+    transparent,
+    rgba(0, 0, 0, 0.9) 6%,
+    rgba(0, 0, 0, 0.5) 30%,
+    transparent 68%
+  );
+  will-change: transform;
+  animation: ur-flare-spin 22s linear infinite;
+}
+.ur-flare__rays--alt {
+  background: repeating-conic-gradient(
+    from 3deg,
+    rgba(255, 255, 255, 0.6) 0deg 0.3deg,
+    transparent 0.8deg 7.9deg
+  );
+  opacity: 0.6;
+  animation: ur-flare-spin 34s linear infinite reverse;
+}
+.ur-flare__streak {
+  height: 18vmax;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(255, 236, 214, 0.8),
+    rgba(255, 180, 120, 0.25) 45%,
+    transparent 70%
+  );
+  filter: blur(6px);
+}
+.ur-flare__core {
+  width: 90vmax;
+  height: 90vmax;
+  background: radial-gradient(
+    closest-side,
+    #fff,
+    rgba(255, 255, 255, 0.9) 12%,
+    rgba(190, 255, 230, 0.45) 30%,
+    transparent 64%
+  );
+  animation: ur-flare-pulse 4s ease-in-out infinite;
+}
+@keyframes ur-flare-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0turn);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(1turn);
+  }
+}
+@keyframes ur-flare-pulse {
+  0%,
+  100% {
+    opacity: 0.95;
+  }
+  50% {
+    opacity: 0.78;
+  }
+}
+/* Grading reveal — the slab-sheet beat between the rip and the card pull
+   (GradingReveal.tsx owns the rows and drives every delay off its STAGGER). */
+.grade-reveal {
+  background: radial-gradient(
+    62% 55% at 50% 48%,
+    rgba(4, 3, 10, 0.92),
+    rgba(4, 3, 10, 0.6) 66%,
+    rgba(4, 3, 10, 0.2)
+  );
+  animation: grade-reveal-out ease-in forwards;
+}
+.grade-line {
+  opacity: 0;
+  animation: grade-line-in 0.55s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+}
+@keyframes grade-line-in {
+  /* translateY+scale+opacity only — stays on the compositor. blur() forced a
+     per-frame re-raster of the huge rows during the tightest beat. */
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes grade-reveal-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+/* Shimmering rarity value — gradient-clipped text scrolled by grade-shimmer;
+   the gradient (tier color or rainbow) comes in inline. */
+.rarity-shimmer {
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: grade-shimmer 3s linear infinite;
+}
+/* Legendary text — cac's UR rainbow (badge t5): the grading sheet's seamless
+   rainbow clipped to the glyphs and scrolled by the same keyframe, so every
+   legendary label (odds, card thumbs, reveal tag, collection) matches the
+   reveal's top-tier treatment. Handed out by gacha-core's rarityText. */
+.text-rainbow {
+  background-image: linear-gradient(90deg, #ff5f6d, #ffc25f, #f7f75f, #5fe38f, #5fc9ff, #b45fff, #ff5f6d);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: grade-shimmer 3s linear infinite;
+}
+@keyframes grade-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* Shuffle beat — the pack is torn but the card is still in flight (a free
+   claim's mint runs 30-60s, so the tear routinely lands first). Three backs
+   riffle in the card's own slot, staggered by a third of the loop each, so the
+   gap reads as dealing rather than as a hang.
+
+   Each back gets its own --sx/--rot (set inline from the card's index): three
+   cards running ONE identical arc reads as a metronome, and the whole point of
+   this beat is that it doesn't look stuck. `scale` sells the lift off the deck,
+   and the opacity dip at the apex fakes the depth the flat backs don't have.
+   transform + opacity only — both composite, so a minute on screen is free. */
+.pack-shuffle-card {
+  --sx: 40%;
+  --rot: 9deg;
+  animation: pack-shuffle 1.5s cubic-bezier(0.33, 0, 0.28, 1) infinite;
+}
+@keyframes pack-shuffle {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  /* peel off the top of the deck */
+  18% {
+    transform: translate3d(calc(var(--sx) * 0.3), -13%, 0) rotate(calc(var(--rot) * 0.45))
+      scale(1.06);
+    opacity: 1;
+  }
+  /* apex, thrown clear of the stack */
+  44% {
+    transform: translate3d(var(--sx), -5%, 0) rotate(var(--rot)) scale(1.02);
+    opacity: 0.9;
+  }
+  /* tuck back under, slightly past centre, then settle */
+  72% {
+    transform: translate3d(calc(var(--sx) * -0.11), 5%, 0) rotate(calc(var(--rot) * -0.3))
+      scale(0.97);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tear-bloom,
+  .ur-flare__rays,
+  .ur-flare__rays--alt,
+  .ur-flare__core,
+  .rarity-shimmer,
+  .text-rainbow {
+    animation: none;
+  }
+  /* rows land at once; the sheet still fades on the component's schedule */
+  .grade-line {
+    animation: none;
+    opacity: 1;
+  }
+  /* NOT animation:none — a dead screen through a minute-long wait reads as a
+     hang. Swap the riffle for the same opacity pulse the live dots use; the
+     per-card delays carry over, so they breathe out of phase. */
+  .pack-shuffle-card {
+    animation: pulseFade 1.8s ease-in-out infinite;
+  }
+}
+
+/* A full-screen gacha theater (rip / grading / card reveal) owns the whole
+   viewport — the floating bottom nav must not ride on top of it */
+body:has(.theater) .bottom-nav {
+  display: none;
+}
+
+/* The gacha stage runs edge to edge, so the app header has to follow it. The
+   header is shared chrome in layout.tsx — it can't know the route — and a
+   header capped to `container` sitting over a full-bleed stage reads as another
+   page's furniture. Same :has() idiom as the rule above, and the gutter matches
+   the stage's own px-4. */
+body:has(.gacha-stage) header .container {
+  max-width: none;
+  padding-inline: 1rem;
+}
+
+/* Route-change bar (RouteProgress). One decelerating sweep to 92% stands in
+   for nprogress's trickle — the last 8% never arrives, the unmount does.
+   `both` holds scaleX(0) through the delay, so prefetched routes that commit
+   inside 150ms flash nothing. */
+@keyframes route-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(0.92);
+  }
+}
+.route-progress {
+  animation: route-progress 8s cubic-bezier(0, 0.6, 0.3, 1) 150ms both;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* NOT animation:none — that leaves scaleX(0) and no loading signal at all.
+     Park it at a static third: present means loading, gone means done. */
+  .route-progress {
+    animation: none;
+    transform: scaleX(0.33);
+  }
+}
+
+/* Border beam — 1:1 port of beam.jakubantalik.com's generated CSS (its React
+   component injects this per-instance; captured from the live hero beam and
+   recolored: the aurora's 9 rainbow radials become a lime family around
+   --brand). Three layers, exactly like the site:
+     ::after       z2  1px stroke ring — white conic arc over colored splashes,
+                       ring-masked (content-box xor) ∩ conic arc mask
+     ::before      z1  inner glow — colored splashes + inset shadow, edge-faded
+     .beam-bloom   z3  the same arc, ring-masked, blur(8px) — the hot core
+   The host spins a registered --beam-angle (that's what makes conic-gradient
+   angles interpolable) and fades --beam-opacity in. Radius 12px matches
+   rounded-xl; browsers without @property just show a static arc. */
+@property --beam-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: true;
+}
+@property --beam-opacity {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+
+.beam-selected {
+  position: relative;
+  overflow: hidden;
+  animation:
+    beam-spin 10s linear infinite,
+    beam-fade-in 0.6s ease forwards;
+}
+
+.beam-selected::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 11px;
+  padding: 1px;
+  clip-path: inset(0 round 12px);
+  background: conic-gradient(
+        from var(--beam-angle),
+        transparent 0%, transparent 54%,
+        rgba(255, 255, 255, 0.1) 57%,
+        rgba(255, 255, 255, 0.3) 60%,
+        rgba(255, 255, 255, 0.6) 63%,
+        rgba(255, 255, 255, 0.75) 66%,
+        rgba(255, 255, 255, 0.6) 69%,
+        rgba(255, 255, 255, 0.3) 72%,
+        rgba(255, 255, 255, 0.1) 75%,
+        transparent 78%, transparent 100%
+      ),
+    radial-gradient(ellipse 70px 40px at 33% -7.4%, #a3e635, transparent),
+    radial-gradient(ellipse 60px 35px at 12% -5%, #4ade80, transparent),
+    radial-gradient(ellipse 40px 70px at 2.1% 68.3%, #2dd4bf, transparent),
+    radial-gradient(ellipse 20px 35px at 2.1% 68.3%, #bef264, transparent),
+    radial-gradient(ellipse 180px 32px at 74.4% 100%, #84cc16, transparent),
+    radial-gradient(ellipse 85px 26px at 55% 100%, #34d399, transparent),
+    radial-gradient(ellipse 74px 32px at 93.9% 0%, #d9f99d, transparent),
+    radial-gradient(ellipse 26px 42px at 100% 27.1%, #a3e635, transparent),
+    radial-gradient(ellipse 52px 48px at 100% 27.1%, #22c55e, transparent);
+  -webkit-mask:
+    conic-gradient(
+      from var(--beam-angle),
+      transparent 0%, transparent 30%,
+      rgba(255, 255, 255, 0.1) 36%, rgba(255, 255, 255, 0.35) 44%,
+      white 52%, white 80%,
+      rgba(255, 255, 255, 0.35) 86%, rgba(255, 255, 255, 0.1) 92%,
+      transparent 95%, transparent 100%
+    ),
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: source-in, xor;
+  mask:
+    conic-gradient(
+      from var(--beam-angle),
+      transparent 0%, transparent 30%,
+      rgba(255, 255, 255, 0.1) 36%, rgba(255, 255, 255, 0.35) 44%,
+      white 52%, white 80%,
+      rgba(255, 255, 255, 0.35) 86%, rgba(255, 255, 255, 0.1) 92%,
+      transparent 95%, transparent 100%
+    ),
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: intersect, exclude;
+  pointer-events: none;
+  z-index: 2;
+  opacity: calc(var(--beam-opacity) * 0.26);
+  animation: beam-hue-shift 12s ease-in-out infinite;
+}
+
+.beam-selected::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: radial-gradient(ellipse 63px 36px at 33% -7.4%, rgba(163, 230, 53, 0.45), transparent),
+    radial-gradient(ellipse 54px 32px at 12% -5%, rgba(74, 222, 128, 0.45), transparent),
+    radial-gradient(ellipse 36px 63px at 2.1% 68.3%, rgba(45, 212, 191, 0.45), transparent),
+    radial-gradient(ellipse 18px 32px at 2.1% 68.3%, rgba(190, 242, 100, 0.45), transparent),
+    radial-gradient(ellipse 162px 29px at 74.4% 100%, rgba(132, 204, 22, 0.45), transparent),
+    radial-gradient(ellipse 77px 23px at 55% 100%, rgba(52, 211, 153, 0.45), transparent),
+    radial-gradient(ellipse 67px 29px at 93.9% 0%, rgba(217, 249, 157, 0.45), transparent),
+    radial-gradient(ellipse 23px 38px at 100% 27.1%, rgba(163, 230, 53, 0.45), transparent),
+    radial-gradient(ellipse 47px 43px at 100% 27.1%, rgba(34, 197, 94, 0.45), transparent);
+  box-shadow: inset 0 0 9px 1px rgba(255, 255, 255, 0.27);
+  -webkit-mask-image:
+    conic-gradient(
+      from var(--beam-angle),
+      transparent 0%, transparent 30%,
+      rgba(255, 255, 255, 0.1) 36%, rgba(255, 255, 255, 0.35) 44%,
+      white 52%, white 80%,
+      rgba(255, 255, 255, 0.35) 86%, rgba(255, 255, 255, 0.1) 92%,
+      transparent 95%, transparent 100%
+    ),
+    linear-gradient(white, transparent 28px, transparent calc(100% - 28px), white),
+    linear-gradient(to right, white, transparent 28px, transparent calc(100% - 28px), white);
+  -webkit-mask-composite: source-in, source-over;
+  mask-image:
+    conic-gradient(
+      from var(--beam-angle),
+      transparent 0%, transparent 30%,
+      rgba(255, 255, 255, 0.1) 36%, rgba(255, 255, 255, 0.35) 44%,
+      white 52%, white 80%,
+      rgba(255, 255, 255, 0.35) 86%, rgba(255, 255, 255, 0.1) 92%,
+      transparent 95%, transparent 100%
+    ),
+    linear-gradient(white, transparent 28px, transparent calc(100% - 28px), white),
+    linear-gradient(to right, white, transparent 28px, transparent calc(100% - 28px), white);
+  mask-composite: intersect, add;
+  pointer-events: none;
+  z-index: 1;
+  opacity: calc(var(--beam-opacity) * 0.42);
+  clip-path: inset(0 round 12px);
+  animation: beam-hue-shift 12s ease-in-out infinite;
+}
+
+.beam-bloom {
+  display: none;
+}
+.beam-selected .beam-bloom {
+  display: block;
+  position: absolute;
+  inset: 0;
+  border-radius: 11px;
+  clip-path: inset(0 round 12px);
+  background: conic-gradient(
+        from var(--beam-angle),
+        transparent 0%, transparent 58%,
+        rgba(255, 255, 255, 0.03) 62%,
+        rgba(255, 255, 255, 0.08) 65%,
+        rgba(255, 255, 255, 0.2) 67%,
+        rgba(255, 255, 255, 0.45) 69%,
+        rgba(255, 255, 255, 0.85) 70%,
+        rgba(255, 255, 255, 0.85) 70.5%,
+        rgba(255, 255, 255, 0.45) 71.5%,
+        rgba(255, 255, 255, 0.2) 73%,
+        rgba(255, 255, 255, 0.08) 75%,
+        rgba(255, 255, 255, 0.03) 78%,
+        transparent 82%
+      );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  padding: 1px;
+  filter: blur(8px) brightness(1.3) saturate(1.2);
+  pointer-events: none;
+  z-index: 3;
+  opacity: calc(var(--beam-opacity) * 0.24);
+}
+
+@keyframes beam-spin {
+  to {
+    --beam-angle: 360deg;
+  }
+}
+@keyframes beam-fade-in {
+  to {
+    --beam-opacity: 1;
+  }
+}
+@keyframes beam-hue-shift {
+  0% {
+    filter: hue-rotate(-30deg) brightness(1.3) saturate(1.2);
+  }
+  50% {
+    filter: hue-rotate(30deg) brightness(1.3) saturate(1.2);
+  }
+  100% {
+    filter: hue-rotate(-30deg) brightness(1.3) saturate(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beam-selected,
+  .beam-selected::before,
+  .beam-selected::after,
+  .beam-selected .beam-bloom {
+    animation-play-state: paused !important;
+  }
+}

@@ -1,0 +1,21 @@
+[extend]
+useDefault = true
+
+[[rules]]
+id = "privy-app-secret"
+description = "Privy app secret (server-side)"
+regex = '''(?i)privy[_-]?app[_-]?secret[\"']?\s*[:=]\s*[\"']?[a-zA-Z0-9_\-]{20,}'''
+tags = ["privy", "secret"]
+
+[[rules]]
+id = "hex-private-key"
+description = "0x-prefixed 32-byte hex private key"
+regex = '''(?i)(?:private[_-]?key|priv[_-]?key|pk)[\"']?\s*[:=]\s*[\"']?0x[0-9a-f]{64}'''
+tags = ["wallet", "key"]
+
+[allowlist]
+paths = [
+  '''\.github/workflows/.*''',
+  '''.*\.md$''',
+  '''.*\.env\.example$''',
+]

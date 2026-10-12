@@ -1,0 +1,57 @@
+const ISO: Record<string, string> = {
+  Algeria: "DZ",
+  Argentina: "AR",
+  Australia: "AU",
+  Austria: "AT",
+  Belgium: "BE",
+  "Bosnia and Herzegovina": "BA",
+  Brazil: "BR",
+  Canada: "CA",
+  "Cape Verde": "CV",
+  Colombia: "CO",
+  "Congo DR": "CD",
+  Croatia: "HR",
+  Curacao: "CW",
+  Czechia: "CZ",
+  Ecuador: "EC",
+  Egypt: "EG",
+  France: "FR",
+  Germany: "DE",
+  Ghana: "GH",
+  Haiti: "HT",
+  Iran: "IR",
+  Iraq: "IQ",
+  "Ivory Coast": "CI",
+  Japan: "JP",
+  "Korea Republic": "KR",
+  Jordan: "JO",
+  Mexico: "MX",
+  Morocco: "MA",
+  Netherlands: "NL",
+  "New Zealand": "NZ",
+  Norway: "NO",
+  Panama: "PA",
+  Paraguay: "PY",
+  Portugal: "PT",
+  Qatar: "QA",
+  "Saudi Arabia": "SA",
+  Senegal: "SN",
+  "South Africa": "ZA",
+  "South Korea": "KR",
+  Spain: "ES",
+  Sweden: "SE",
+  Switzerland: "CH",
+  Tunisia: "TN",
+  Turkey: "TR",
+  USA: "US",
+  Uruguay: "UY",
+  Uzbekistan: "UZ",
+};
+
+/** flagcdn.com (flagpedia CDN) country code, or null if unknown. */
+export function flagCode(name: string): string | null {
+  if (name === "England") return "gb-eng";
+  if (name === "Scotland") return "gb-sct";
+  const iso = ISO[name];
+  return iso ? iso.toLowerCase() : null;
+}

@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dev",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "dev"],
+      "autoPort": true
+    },
+    {
+      "name": "prod",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "start", "--port", "3458"],
+      "port": 3458
+    },
+    {
+      "name": "prod-verify",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "start"],
+      "autoPort": true
+    }
+  ]
+}

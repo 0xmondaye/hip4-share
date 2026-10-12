@@ -1,0 +1,217 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ===== GAMBIT BRUTALIST DESIGN SYSTEM ===== */
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg-dim: var(--fg-dim);
+  --color-fg-dimmer: var(--fg-dimmer);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
+  --color-primary: var(--accent);
+  --color-primary-foreground: #000000;
+  --color-card: var(--surface);
+  --color-card-foreground: var(--fg);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--fg);
+  --color-secondary: var(--surface-2);
+  --color-secondary-foreground: var(--fg);
+  --color-muted: var(--surface-2);
+  --color-muted-foreground: var(--fg-dim);
+  --color-destructive: var(--danger);
+  --color-border: var(--line);
+  --color-input: var(--surface);
+  --color-ring: var(--accent);
+  --color-accent-foreground: #000000;
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-archivo);
+  --font-mono: var(--font-jetbrains);
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+}
+
+:root {
+  --bg: #000000;
+  --surface: #0a0a0a;
+  --surface-2: #111111;
+  --line: #222222;
+  --line-strong: #3a3a3a;
+  --fg: #ffffff;
+  --fg-dim: #888888;
+  --fg-dimmer: #555555;
+  --accent: #d4ff3c;
+  --danger: #ff4444;
+  --radius: 0px;
+}
+
+@layer base {
+  * {
+    @apply border-line outline-accent/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ===== TYPE SYSTEM ===== */
+.display {
+  font-family: var(--font-archivo), "Archivo Black", "Arial Black", sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 0.9;
+}
+
+.mono {
+  font-family: var(--font-jetbrains), "JetBrains Mono", "Courier New", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 11px;
+}
+
+.mono-sm {
+  font-family: var(--font-jetbrains), "JetBrains Mono", "Courier New", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 10px;
+}
+
+/* ===== BRUTALIST PRIMITIVES ===== */
+.divider { border-top: 1px solid var(--line); }
+.divider-strong { border-top: 2px solid var(--fg); }
+.divider-accent { border-top: 1px solid var(--accent); }
+
+/* Border-as-gap grid: parent has bg white, children have bg black, gap creates dividers */
+.border-grid {
+  background: var(--fg);
+  gap: 2px;
+}
+.border-grid > * {
+  background: var(--bg);
+}
+
+/* Brutalist hover shadow */
+.brutalist-hover {
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.brutalist-hover:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--fg);
+}
+
+/* Accent hover shadow variant */
+.brutalist-hover-accent {
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.brutalist-hover-accent:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--accent);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+* { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.15) transparent; }
+
+::selection {
+  background: rgba(212, 255, 60, 0.4);
+  color: var(--fg);
+}
+
+/* Safe area utilities */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+/* ===== PIXEL SPRITE ANIMATIONS ===== */
+@keyframes sprite-float {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  25% { transform: translateY(-3px) translateX(1px); }
+  50% { transform: translateY(-5px) translateX(-1px); }
+  75% { transform: translateY(-2px) translateX(2px); }
+}
+.sprite-float {
+  animation: sprite-float 3s ease-in-out infinite;
+}
+@keyframes sprite-aura-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.sprite-aura {
+  animation: sprite-aura-pulse 2.4s ease-in-out infinite;
+}
+
+/* Wander variants — each tier sprite picks one variant at mount so a row
+   of sprites doesn't move in lockstep. Trajectories are bounded inside a
+   small ±10px box so sprites never escape their parent container. */
+@keyframes sprite-wander-0 {
+  0%, 100% { transform: translate(0px, 0px); }
+  25% { transform: translate(-7px, -4px); }
+  50% { transform: translate(5px, -8px); }
+  75% { transform: translate(8px, 3px); }
+}
+@keyframes sprite-wander-1 {
+  0%, 100% { transform: translate(0px, 0px); }
+  20% { transform: translate(6px, -6px); }
+  45% { transform: translate(-8px, -2px); }
+  70% { transform: translate(-3px, 7px); }
+  90% { transform: translate(7px, 4px); }
+}
+@keyframes sprite-wander-2 {
+  0%, 100% { transform: translate(0px, 0px); }
+  30% { transform: translate(8px, 5px); }
+  60% { transform: translate(-9px, 6px); }
+  85% { transform: translate(-4px, -7px); }
+}
+@keyframes sprite-wander-3 {
+  0%, 100% { transform: translate(0px, 0px); }
+  20% { transform: translate(-5px, 8px); }
+  50% { transform: translate(7px, 7px); }
+  80% { transform: translate(4px, -6px); }
+}
+@keyframes sprite-wander-4 {
+  0%, 100% { transform: translate(0px, 0px); }
+  35% { transform: translate(-9px, -5px); }
+  70% { transform: translate(8px, -3px); }
+  90% { transform: translate(2px, 8px); }
+}
+@keyframes sprite-wander-5 {
+  0%, 100% { transform: translate(0px, 0px); }
+  25% { transform: translate(4px, -8px); }
+  55% { transform: translate(-6px, 5px); }
+  80% { transform: translate(8px, 6px); }
+}
+.sprite-wander { animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+.sprite-wander-0 { animation-name: sprite-wander-0; animation-duration: 7s; }
+.sprite-wander-1 { animation-name: sprite-wander-1; animation-duration: 9s; }
+.sprite-wander-2 { animation-name: sprite-wander-2; animation-duration: 8s; }
+.sprite-wander-3 { animation-name: sprite-wander-3; animation-duration: 10s; }
+.sprite-wander-4 { animation-name: sprite-wander-4; animation-duration: 7.5s; }
+.sprite-wander-5 { animation-name: sprite-wander-5; animation-duration: 8.5s; }
+
+/* ===== TICKER BAR ===== */
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-scroll {
+  animation: ticker-scroll 30s linear infinite;
+}
